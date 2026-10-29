@@ -14,7 +14,7 @@ python3 -m http.server 8000
 ```
 
 ## Docker & deployment
-The site ships as an nginx image (`ghcr.io/kolonuk/rafactools`, port 8080, `/health` endpoint).
+The site ships as an nginx image (`ghcr.io/kolonuk/rafactools`, port 8080).
 
 ```bash
 docker compose up --build   # http://localhost:8080

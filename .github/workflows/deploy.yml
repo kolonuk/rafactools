@@ -61,14 +61,12 @@ jobs:
       - name: Smoke test
         run: |
           docker run -d --name smoke -p 18081:8080 "${{ steps.meta.outputs.image_ref }}"
-          code=""
+          ok=""
           for _ in $(seq 1 10); do
-            code="$(curl -s -o /dev/null -w '%{http_code}' http://localhost:18081/health || true)"
-            [ "$code" = "200" ] && break
+            curl -s http://localhost:18081/ | grep -q "RAFAC Tools" && { ok=1; break; }
             sleep 1
           done
-          [ "$code" = "200" ] || { echo "/health did not return 200 (got $code)"; docker logs smoke; exit 1; }
-          curl -s http://localhost:18081/ | grep -q "RAFAC Tools" || { echo "index page missing"; docker logs smoke; exit 1; }
+          [ -n "$ok" ] || { echo "index page not served"; docker logs smoke; exit 1; }
           docker rm -f smoke
 
       - name: Scan image for vulnerabilities
