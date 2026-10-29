@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b3d91">
+<title>RAFAC Tools</title>
+<meta name="description" content="Tools for RAFAC squadrons: training planner and Chrome extensions.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="app-bar">
+  <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4Zm0 4 4 2v4c0 2.700-1.600 4.800-4 5.700-2.400-.9-4-3-4-5.700V8l4-2Z"/></svg>
+  <h1>RAFAC Tools</h1>
+</header>
+<main>
+  <section class="hero">
+    <h2>Tools for your squadron</h2>
+    <p>Pick a tool to get started.</p>
+  </section>
+  <section aria-labelledby="apps-h">
+    <h3 id="apps-h" class="section-title">Web apps</h3>
+    <div class="grid" id="apps"></div>
+  </section>
+  <section aria-labelledby="ext-h">
+    <h3 id="ext-h" class="section-title">Chrome extensions</h3>
+    <div class="grid" id="extensions"></div>
+  </section>
+</main>
+<footer>Unofficial tools for RAFAC volunteers.</footer>
+<script>
+// To add a sub-app: create a sub-directory (e.g. /newapp/) and add an entry here.
+const apps = [
+  { title: "Planner", glyph: "📅", href: "/planner/",
+    desc: "Build monthly parade-night programmes and export them as PDF." }
+];
+const extensions = [
+  { title: "RAFAC Cadet Training Tracker", glyph: "✅",
+    href: "https://chromewebstore.google.com/detail/rafac-cadet-training-trac/lfcpopdndlpobnbpbfaincpgeacclmfc",
+    desc: "Track cadet training progress directly in your browser." },
+  { title: "RAFAC Dashy", glyph: "📊",
+    href: "https://chromewebstore.google.com/detail/rafac-dashy/hgjcgegcoemljmiacbcncfjadbfgfefc",
+    desc: "A friendlier dashboard for RAFAC systems." }
+];
+function render(id, items, external) {
+  const el = document.getElementById(id);
+  for (const it of items) {
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = it.href;
+    if (external) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+    const ic = document.createElement("span"); ic.className = "icon"; ic.textContent = it.glyph; ic.setAttribute("aria-hidden","true");
+    const h = document.createElement("h4"); h.textContent = it.title;
+    const p = document.createElement("p"); p.textContent = it.desc;
+    const act = document.createElement("span"); act.className = "action";
+    act.textContent = external ? "Open in Chrome Web Store" : "Open";
+    a.append(ic, h, p, act);
+    el.append(a);
+  }
+}
+render("apps", apps, false);
+render("extensions", extensions, true);
+</script>
+</body>
+</html>
