@@ -1,0 +1,6 @@
+# Local dev only. Production runs as a service in the dadock stack.
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
