@@ -12,6 +12,8 @@
 <body>
 <header class="app-bar">
   <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4Zm0 4 4 2v4c0 2.700-1.600 4.800-4 5.700-2.400-.9-4-3-4-5.700V8l4-2Z"/></svg>
+  <img class="brand" id="atc-crest" src="assets/atc-crest.svg" alt="Air Training Corps crest" hidden>
+  <img class="brand" id="atc-logo" src="assets/atc-logo.svg" alt="Air Training Corps" hidden>
   <h1>RAFAC Tools</h1>
 </header>
 <main>
@@ -28,7 +30,11 @@
     <div class="grid" id="extensions"></div>
   </section>
 </main>
-<footer>Unofficial tools for RAFAC volunteers.</footer>
+<footer id="about">
+  <h3 class="section-title">About</h3>
+  <p>RAFAC Tools is an unofficial, open-source collection of tools for RAFAC volunteers. It is not endorsed by the RAF or the Ministry of Defence.
+  Source and issues: <a href="https://github.com/kolonuk/rafactools">github.com/kolonuk/rafactools</a>.</p>
+</footer>
 <script>
 // To add a sub-app: create a sub-directory (e.g. /newapp/) and add an entry here.
 const apps = [
@@ -43,6 +49,17 @@ const extensions = [
     href: "https://chromewebstore.google.com/detail/rafac-dashy/hgjcgegcoemljmiacbcncfjadbfgfefc",
     desc: "A friendlier dashboard for RAFAC systems." }
 ];
+// Official ATC logo/crest: drop atc-logo.svg / atc-crest.svg (or .png) into assets/.
+// Each image is shown only if it loads; the generic shield is hidden once one does.
+for (const id of ["atc-crest", "atc-logo"]) {
+  const img = document.getElementById(id);
+  const show = () => { img.hidden = false; document.querySelector(".logo").style.display = "none"; };
+  img.addEventListener("load", show);
+  img.addEventListener("error", () => {
+    if (img.src.endsWith(".svg")) img.src = img.src.replace(/\.svg$/, ".png"); // try PNG once
+  });
+  if (img.complete && img.naturalWidth) show();
+}
 function render(id, items, external) {
   const el = document.getElementById(id);
   for (const it of items) {

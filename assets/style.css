@@ -13,6 +13,7 @@
 body{margin:0;background:var(--surface);color:var(--on-surface);font:16px/1.5 Roboto,system-ui,-apple-system,"Segoe UI",sans-serif}
 .app-bar{display:flex;align-items:center;gap:12px;padding:0 16px;height:64px;background:var(--primary);color:var(--on-primary);box-shadow:0 2px 4px var(--shadow)}
 .app-bar h1{font-size:22px;font-weight:500;margin:0}
+.brand{height:44px;width:auto}
 .logo{width:28px;height:28px;fill:currentColor}
 main{max-width:960px;margin:0 auto;padding:16px}
 .hero{padding:32px 0 8px}
@@ -27,5 +28,7 @@ main{max-width:960px;margin:0 auto;padding:16px}
 .card h4{margin:8px 0 0;font-size:20px;font-weight:500}
 .card p{margin:0;flex:1;color:var(--on-surface-variant);font-size:14px}
 .action{align-self:flex-start;margin-top:8px;padding:8px 20px;border-radius:20px;background:var(--primary);color:var(--on-primary);font-size:14px;font-weight:500}
-footer{max-width:960px;margin:32px auto 16px;padding:0 16px;color:var(--on-surface-variant);font-size:13px}
+footer{max-width:960px;margin:32px auto 16px;padding:0 16px;color:var(--on-surface-variant);font-size:14px}
+footer p{margin:0}
+footer a{color:var(--primary)}
 @media (prefers-reduced-motion:reduce){.card{transition:none}}
