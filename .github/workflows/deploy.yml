@@ -1,6 +1,7 @@
-# Builds the image, smoke-tests it, pushes to GHCR, and dispatches dadock's
-# deploy workflow so the running stack picks up the new image.
-name: Build and deploy
+# Lints, builds, smoke-tests and scans the image, then pushes the immutable
+# main-<sha12> tag to GHCR. dadock's reconciler pins that tag; nothing here
+# deploys.
+name: Build and push
 
 on:
   push:
@@ -25,7 +26,32 @@ env:
   IMAGE_NAME: ${{ github.repository_owner }}/rafactools
 
 jobs:
+  lint-dockerfile:
+    name: Lint Dockerfile
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+
+  trivy-fs:
+    name: Scan source for vulnerabilities (Trivy FS)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Scan
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          exit-code: "1"
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+
   build:
+    needs: [lint-dockerfile, trivy-fs]
     name: Build, scan and push image
     runs-on: ubuntu-24.04
     permissions:
@@ -94,36 +120,4 @@ jobs:
           push: true
           tags: |
             ${{ steps.meta.outputs.image_ref }}
-            ${{ steps.meta.outputs.image_base }}:latest
           cache-from: type=gha
-
-  cleanup-images:
-    name: Clean up old container images
-    needs: build
-    runs-on: ubuntu-24.04
-    permissions:
-      packages: write
-    steps:
-      - uses: actions/delete-package-versions@25ad4af5be03aef10e0b3376b248688b7a44c40b # v5
-        with:
-          package-name: "rafactools"
-          package-type: "container"
-          min-versions-to-keep: 10
-
-  trigger-dadock-deploy:
-    name: Reload the dadock stack
-    needs: build
-    runs-on: ubuntu-24.04
-    steps:
-      # DADOCK_DEPLOY_TOKEN: fine-grained PAT with Actions:write on
-      # kolonuk/dadock only (same secret as rafactools-planner). Without it
-      # this step just prints a reminder to pull manually.
-      - name: Dispatch dadock deploy workflow
-        env:
-          GH_TOKEN: ${{ secrets.DADOCK_DEPLOY_TOKEN }}
-        run: |
-          if [ -z "${GH_TOKEN:-}" ]; then
-            echo "DADOCK_DEPLOY_TOKEN not set - skipping dadock reload. Pull the new image manually." >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          gh workflow run "1. Deploy docker stack" --repo kolonuk/dadock
