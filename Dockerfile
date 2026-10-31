@@ -1,7 +1,7 @@
 # Static launcher served by unprivileged nginx (UID 101, port 8080). The
 # planner and any other sub-app are separate services routed by sub-path in
 # the dadock stack; this image only serves the menu at /.
-FROM nginxinc/nginx-unprivileged:1.29-alpine
+FROM nginxinc/nginx-unprivileged:1.31-alpine
 
 # The base image's own baked-in Alpine packages lag behind the upstream
 # security repo (confirmed live, 2026-10-29: util-linux, libxml2, pcre2 and
